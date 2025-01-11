@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SMIS2025</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AuthSystem.styles.css" asp-append-version="true" />
+    <style>
+        .no-header {
+            display: none !important;
+        }
+
+        body {
+            display: flex;
+        }
+
+        .navbar {
+            background-color: #E8E8E8;
+        }
+
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            height: fit-content;
+            background-color: #F4F4F4;
+            border: 1px solid #eee;
+            border-radius: .3rem;
+        }
+
+        #content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            color: #495057;
+            border-radius: .3rem;
+            margin-bottom: 5px;
+            text-decoration: none;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+            .nav-item:hover:not(.active) {
+                background-color: #D6D6D6;
+                color: #212529;
+            }
+
+            .nav-item.active {
+                background-color: #1ABC9C !important;
+            }
+
+        .collapse .nav-item {
+            padding-left: 20px;
+        }
+
+    </style>
+</head>
+<body class="flex-column">
+    <header class="@(Context.Request.Path == "/Identity/Account/Login" ? "no-header" : "")">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SMIS2025</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @*     <li class="nav-item"> *@
+                        @*         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a> *@
+                        @*     </li> *@
+                        @*     <li class="nav-item"> *@
+                        @*         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+                        @*     </li> *@
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="d-flex flex-row">
+        <div id="sidebar" class="d-flex flex-column p-3 @(Context.Request.Path == "/Identity/Account/Login" ? "no-header" : "")">
+            <h5 class="text-center">Menu</h5>
+            <hr>
+            <ul class="nav flex-column">
+              @*  <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>*@
+                 @if (User.IsInRole("Student"))
+                {
+
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grades" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Details">Transcript</a>
+                    </li>
+                }
+                <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="MyProfile">My Profile</a>
+                </li>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                {
+
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grades" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Grades" asp-action="Index">Add Grade</a>
+                    </li>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+
+                <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Departments" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index">Department</a>
+                </li>
+            
+
+                    <a class="nav-link text-dark nav-item" asp-area="Identity" asp-page="/Account/AllStaff">Staff</a>
+                <a class="nav-link text-dark nav-item" asp-area="Identity" asp-page="/Account/AllUsers">Students</a>
+                <a class="nav-link text-dark nav-item" asp-area="Identity" asp-page="/Account/Register">Register Memeber</a>
+
+
+                <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Subjects" asp-action="Index">Subject</a>
+                </li>
+
+                    <a class="nav-link text-danger nav-item" asp-area="" asp-page="">
+                        open the exam period-ADMIN- duhet me bo !!
+                    </a>
+                    <a class="nav-link text-danger nav-item" asp-area="" asp-page="">
+                        paraqit provimiet-Student-Duhet me bo!!
+                    </a>
+
+                }
+            </ul>
+        </div>
+
+
+        <div id="content" class="container">
+            <main role="main" class="pb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    @if (ViewContext.RouteData.Values["controller"]?.ToString() != "Home")
+                    {
+                        @if (!string.IsNullOrEmpty(ViewContext.RouteData.Values["action"]?.ToString()) &&
+                       ViewContext.RouteData.Values["action"]?.ToString() != "Index")
+                        {
+                            <li class="breadcrumb-item">
+                                <a asp-area="" asp-controller="@ViewContext.RouteData.Values["controller"]" asp-action="Index">
+                                    @ViewContext.RouteData.Values["controller"]
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                @ViewContext.RouteData.Values["action"]
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="breadcrumb-item">
+                                @ViewContext.RouteData.Values["controller"]
+                            </li>
+                        }
+
+                    }
+
+                </ol>
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - SMIS2025 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

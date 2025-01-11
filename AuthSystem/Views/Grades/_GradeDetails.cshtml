@@ -1,0 +1,37 @@
+﻿@model IEnumerable<AuthSystem.Models.Grade>
+
+<h3 class="text-center mb-4">Transcript Details</h3>
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Code</th>
+            <th>Subject</th>
+            <th>ECTS</th>
+            <th>Grade</th>
+            <th>Category</th>
+            <th>Letter Grade</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var grade in Model)
+        {
+            <tr>
+                <td>@grade.Subject.Code</td>
+                <td>@grade.Subject.Name</td>
+                <td>@grade.Subject.ETCs</td>
+                <td>@grade.Number</td>
+                <td>@grade.Subject.Category</td>
+                <td>@grade.Letter</td>
+                <td>@grade.GradeStatus</td>
+            </tr>
+        }
+        <tr>
+            <td colspan="2"></td>
+            <td><strong>@Model.Sum(g => g.Subject.ETCs).ToString("F2")</strong></td>
+            <td><strong>@Model.Average(g => g.Number).ToString("F2")</strong></td>
+            <td colspan="3"></td>
+        </tr>
+    </tbody>
+</table>

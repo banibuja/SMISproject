@@ -1,0 +1,96 @@
+﻿@model AuthSystem.Models.Grade
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    #LetterInput {
+        box-shadow: none !important;
+        border-color: white !important;
+    }
+</style>
+<h1>Create</h1>
+
+<h4>Grade</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+
+
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StudentId" class="control-label"></label>
+                <select asp-for="StudentId" class="form-control" id="StudentSelect" asp-items="ViewBag.Users"></select>
+
+                <span asp-validation-for="StudentId" class="text-danger"></span>
+            </div>
+            <div class="form-group d-flex">
+
+                <div class="flex-grow-1">
+                    <label asp-for="Number" class="control-label"></label>
+                    <select asp-for="Number" class="form-control" id="NumberInput" asp-items="ViewBag.Numbers"></select>
+                    <span asp-validation-for="Number" class="text-danger"></span>
+                </div>
+                <div class="w-25">
+                    <label asp-for="Letter" class="control-label"></label>
+                    <input asp-for="Letter" class="form-control " id="LetterInput" readonly />
+                    <span asp-validation-for="Letter" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="GradeStatus" class="control-label"></label>
+                <select asp-for="GradeStatus" class="form-control" asp-items="ViewBag.GradeStatuses"></select>
+                <span asp-validation-for="GradeStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SubjectId" class="control-label"></label>
+                <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.SubjectId" id="SubjectSelect" onchange="updateStudents()"></select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Get the select element and the letter input field
+                var studentIdSelect = document.getElementById("NumberInput");
+                var letterInput = document.getElementById("LetterInput");
+
+                // Function to map number to letter grade
+                function mapNumberToLetter(number) {
+                    switch (number) {
+                        case 10: return "A";
+                        case 9: return "B";
+                        case 8: return "C";
+                        case 7: return "D";
+                        case 6: return "E";
+                        case 5: return "F";
+                        default: return "F";  // default to F if an unexpected number is selected
+                    }
+                }
+                handleNumberChange()
+                // Listen for changes to the select dropdown
+                studentIdSelect.addEventListener("change", handleNumberChange);
+                function handleNumberChange() {
+                    var selectedNumber = parseInt(studentIdSelect.value);
+                    var letter = mapNumberToLetter(selectedNumber);
+                    letterInput.value = letter;  // Update the letter input
+
+                }
+            });
+        </script>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

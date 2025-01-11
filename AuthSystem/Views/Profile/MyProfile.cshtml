@@ -1,0 +1,60 @@
+﻿@model AuthSystem.Areas.Identity.Data.ApplicationUser
+
+<style>
+    .card {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .list-group-item {
+        border: none;
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+</style>
+
+
+
+@*<h1 class="text-center my-4">Profili Im</h1>*@
+
+@if (Model != null)
+{
+    <div class="card mx-auto shadow" style="max-width: 600px;">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">Detajet e Profilit</h4>
+            <ul class="list-group list-group-flush">
+
+                @if (User.IsInRole("Student"))
+                {
+                <li class="list-group-item"><strong>Student ID:</strong> @Model.StudentId</li>
+                }
+                <li class="list-group-item"><strong>First Name:</strong> @Model.FirstName</li>
+
+                <li class="list-group-item"><strong>Last Name:</strong> @Model.LastName</li>
+                <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
+                <li class="list-group-item"><strong>Personal Number:</strong> @Model.PersonalNumber</li>
+                <li class="list-group-item"><strong>Birth Place:</strong> @Model.BirthPlace</li>
+                <li class="list-group-item"><strong>Residence:</strong> @Model.Residence</li>
+                <li class="list-group-item"><strong>Zip Code:</strong> @Model.ZipCode</li>
+                <li class="list-group-item"><strong>Private Email:</strong> @Model.PrivateEmail</li>
+                <li class="list-group-item"><strong>Nationality:</strong> @Model.Nationality</li>
+                <li class="list-group-item"><strong>Citizenship:</strong> @Model.Citizenship</li>
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center">
+        Përdoruesi nuk është gjetur.
+    </div>
+}
