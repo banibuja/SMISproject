@@ -13,7 +13,7 @@ public class ApplicationUser : IdentityUser
 {
     [PersonalData]
     [Column(TypeName = "nvarchar(15)")]
-    public string StudentId { get; set; } 
+    public string? StudentId { get; set; }  
 
 
 

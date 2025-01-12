@@ -40,7 +40,7 @@ namespace AuthSystem.Controllers
             foreach (var grade in grades)
             {
                 var user = users.FirstOrDefault(u => u.Id == grade.StudentId);
-                grade.StudentId = user?.StudentId ?? "Unknown"; // Dynamically set the student's name
+                grade.StudentId = user?.UserName ?? "Unknown"; // Dynamically set the student's name
             }
 
             return View(grades);
@@ -105,7 +105,7 @@ namespace AuthSystem.Controllers
             // Populoni ViewData me të dhënat e filtruara
             ViewData["Numbers"] = new SelectList(numbers);
             ViewData["GradeStatuses"] = new SelectList(gradeStatuses);
-            ViewData["Users"] = new SelectList(studentUsers, "Id", "StudentId");
+            ViewData["Users"] = new SelectList(studentUsers, "Id", "UserName");
             ViewData["SubjectId"] = new SelectList(unGradedSubjects, "Id", "Name");
 
             return View();

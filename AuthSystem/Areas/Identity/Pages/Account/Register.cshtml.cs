@@ -21,9 +21,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuthSystem.Areas.Identity.Pages.Account
 {
-
     [Authorize(Roles = "Admin")]
-
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -31,51 +29,35 @@ namespace AuthSystem.Areas.Identity.Pages.Account
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-       // private readonly IEmailSender _emailSender;
         private readonly AuthDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
-
-
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-          //  IEmailSender emailSender,
-             AuthDbContext context,
-             RoleManager<IdentityRole> roleManager
-
-            )
+            AuthDbContext context,
+            RoleManager<IdentityRole> roleManager
+        )
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-           // _emailSender = emailSender;
             _context = context;
-            _roleManager = roleManager; 
-
-
+            _roleManager = roleManager;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
 
-
-
         public string ReturnUrl { get; set; }
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
-
-        public IList<Department> Departments { get; set; }  // List to hold departments
-                                                            //   public IList<Course> Courses { get; set; }  // List to hold courses based on selected department
-
-        public IList<string> Roles { get; set; }  // Lista e roleve
-        public IList<ApplicationUser> AllUsers { get; set; } // List to hold all users
-
-
-
+        public IList<Department> Departments { get; set; }
+        public IList<string> Roles { get; set; }
+        public IList<ApplicationUser> AllUsers { get; set; }
 
         public class InputModel
         {
@@ -86,8 +68,6 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
-
-
 
             [Required]
             [Display(Name = "Personal Number")]
@@ -136,8 +116,6 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             [Display(Name = "Role")]
             public string SelectedRole { get; set; }
 
-
-
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -154,15 +132,11 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
+    
+
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-         /*   if (User.Identity.IsAuthenticated)
-            {
-                Response.Redirect("/");
-            } */
-
-            // Load departments and roles
             Roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
             Departments = await _context.Department.ToListAsync();
             AllUsers = await _userManager.Users.ToListAsync();
@@ -170,10 +144,6 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
-
-
-
-
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
@@ -182,7 +152,6 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.PersonalNumber = Input.PersonalNumber;
@@ -199,6 +168,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                 user.Citizenship = Input.Citizenship;
                 user.DepartmentId = Input.DepartmentId;
 
+                // Generate the Student ID if the selected role is "Student"
                 if (Input.SelectedRole == "Student")
                 {
                     var currentYear = DateTime.Now.Year.ToString().Substring(2);
@@ -207,18 +177,21 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     user.StudentId = $"{currentYear}{nextYear}{randomNumber}";
                 }
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                // Generate email
+                string generatedEmail = GenerateEmail(user.FirstName, user.LastName, user.StudentId);
+                user.Email = generatedEmail;
 
+                // Set the username and email
+                await _userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
+
+                // Create user in the database
+                var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
                     await _userManager.AddToRoleAsync(user, Input.SelectedRole);
-
-                    // Dërgo email me të dhënat
                     await SendRegistrationDetailsEmail(user);
-
                     return LocalRedirect(returnUrl);
                 }
 
@@ -230,6 +203,19 @@ namespace AuthSystem.Areas.Identity.Pages.Account
 
             return Page();
         }
+
+
+        private string GenerateEmail(string firstName, string lastName, string studentId)
+        {
+            // Extract the first character of firstName and lastName
+            string firstCharacterFirstName = firstName.Substring(0, 1).ToLower();
+            string firstCharacterLastName = lastName.Substring(0, 1).ToLower();
+
+            // Return the email address in the desired format
+            return $"{firstCharacterFirstName}{firstCharacterLastName}{studentId}@smis-uni.net";
+        }
+
+
 
         private async Task SendRegistrationDetailsEmail(ApplicationUser user)
         {
@@ -280,9 +266,6 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                 _logger.LogError("Failed to send email: {0}", ex.Message);
             }
         }
-
-
-
 
         private ApplicationUser CreateUser()
         {
