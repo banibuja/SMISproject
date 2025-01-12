@@ -18,7 +18,6 @@
                 <th>Last Name</th>
                 <th>Email</th>
                 <th>Department</th>
-                <th>Role</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -32,7 +31,6 @@
                     <td>@user.LastName</td>
                     <td>@user.Email</td>
                     <td>@(user.Department?.Name ?? "No Department")</td> <!-- Shfaq emrin e departamentit -->
-                    <td>@(string.Join(", ", Model.UserRoles[user]))</td>
                     <td>
                         <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id">
                             <a asp-page="./EditUser" asp-route-id="@user.Id" class="btn btn-primary">Edit</a>

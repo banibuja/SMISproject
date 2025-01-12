@@ -39,6 +39,9 @@ public DbSet<AuthSystem.Models.Subject> Subject { get; set; } = default!;
 
 public DbSet<AuthSystem.Models.Grade> Grade { get; set; } = default!;
 
+    public DbSet<ExamPeriod> ExamPeriods { get; set; }
+  //  public DbSet<ExamSubmission> ExamSubmissions { get; set; }
+
 
 
 }

@@ -4,6 +4,7 @@ using AuthSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250112143245_uperrrtadayyyyy")]
+    partial class uperrrtadayyyyy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,6 +241,37 @@ namespace AuthSystem.Migrations
                     b.ToTable("ExamPeriods");
                 });
 
+            modelBuilder.Entity("AuthSystem.Models.ExamSubmission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExamPeriodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SubjectIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SubmissionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamPeriodId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExamSubmissions");
+                });
+
             modelBuilder.Entity("AuthSystem.Models.Grade", b =>
                 {
                     b.Property<int>("Id")
@@ -294,6 +328,9 @@ namespace AuthSystem.Migrations
                     b.Property<double>("ETCs")
                         .HasColumnType("float");
 
+                    b.Property<int?>("ExamSubmissionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -301,6 +338,8 @@ namespace AuthSystem.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("ExamSubmissionId");
 
                     b.ToTable("Subject");
                 });
@@ -512,6 +551,25 @@ namespace AuthSystem.Migrations
                     b.Navigation("Department");
                 });
 
+            modelBuilder.Entity("AuthSystem.Models.ExamSubmission", b =>
+                {
+                    b.HasOne("AuthSystem.Models.ExamPeriod", "ExamPeriod")
+                        .WithMany()
+                        .HasForeignKey("ExamPeriodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AuthSystem.Areas.Identity.Data.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamPeriod");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("AuthSystem.Models.Grade", b =>
                 {
                     b.HasOne("AuthSystem.Models.Subject", "Subject")
@@ -526,6 +584,10 @@ namespace AuthSystem.Migrations
                     b.HasOne("AuthSystem.Models.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId");
+
+                    b.HasOne("AuthSystem.Models.ExamSubmission", null)
+                        .WithMany("Subjects")
+                        .HasForeignKey("ExamSubmissionId");
 
                     b.Navigation("Department");
                 });
@@ -598,6 +660,11 @@ namespace AuthSystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.ExamSubmission", b =>
+                {
+                    b.Navigation("Subjects");
                 });
 #pragma warning restore 612, 618
         }

@@ -31,7 +31,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
-    await SeedRolesAsync(serviceProvider);
+    await SeedRolesAndAdminAsync(serviceProvider);
 }
 
 // Configure middleware
@@ -53,13 +53,12 @@ app.MapRazorPages();
 app.Run();
 
 // Method to seed roles
-async Task SeedRolesAsync(IServiceProvider serviceProvider)
+async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    // List of roles to create
     var roles = new[] { "Admin", "Staff", "Student" };
-
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
@@ -67,4 +66,45 @@ async Task SeedRolesAsync(IServiceProvider serviceProvider)
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
+
+    var adminEmail = "admin@admin.com";
+    var adminPassword = "Kosova1234.";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        var newAdmin = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true, // Opsional
+            FirstName = "Admin",
+            LastName = "Administrator",
+            PersonalNumber = "123456789",
+            ParentName = "Parent Name",
+            BirthDate = new DateTime(1990, 1, 1),
+            Gender = "Male",
+            BirthPlace = "Prishtina",
+            State = "Kosova",
+            Residence = "Prishtina",
+            Address = "Rruga Admin",
+            ZipCode = "10000",
+            PrivateEmail = "private@admin.com",
+            Nationality = "Kosovar",
+            Citizenship = "Kosovar",
+            DepartmentId = null 
+        };
+
+        var result = await userManager.CreateAsync(newAdmin, adminPassword);
+
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(newAdmin, "Admin");
+        }
+        else
+        {
+            throw new Exception($"Nuk u krijua admini: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+    }
 }
+

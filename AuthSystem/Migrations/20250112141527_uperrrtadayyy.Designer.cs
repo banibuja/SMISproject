@@ -4,6 +4,7 @@ using AuthSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250112141527_uperrrtadayyy")]
+    partial class uperrrtadayyy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,6 +239,38 @@ namespace AuthSystem.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("ExamPeriods");
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.ExamSubmission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExamPeriodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SubmissionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamPeriodId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExamSubmissions");
                 });
 
             modelBuilder.Entity("AuthSystem.Models.Grade", b =>
@@ -510,6 +545,33 @@ namespace AuthSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("AuthSystem.Models.ExamSubmission", b =>
+                {
+                    b.HasOne("AuthSystem.Models.ExamPeriod", "ExamPeriod")
+                        .WithMany()
+                        .HasForeignKey("ExamPeriodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AuthSystem.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AuthSystem.Areas.Identity.Data.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamPeriod");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AuthSystem.Models.Grade", b =>

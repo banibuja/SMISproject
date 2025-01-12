@@ -115,25 +115,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Role")]
             public string SelectedRole { get; set; }
-            /*
-                       [Required]
-                       [EmailAddress]
-                       [Display(Name = "Email")]
-                       public string Email { get; set; }
-
-                      [Required]
-                       [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-                       [DataType(DataType.Password)]
-                       [Display(Name = "Password")]
-                       public string Password { get; set; }
-
-                       [DataType(DataType.Password)]
-                       [Display(Name = "Confirm password")]
-                       [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-                       public string ConfirmPassword { get; set; }  */
         }
-
-
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -144,6 +126,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
+
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
@@ -168,17 +151,19 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                 user.Citizenship = Input.Citizenship;
                 user.DepartmentId = Input.DepartmentId;
 
-                // Generate the Student ID if the selected role is "Student"
-                if (Input.SelectedRole == "Student")
+                // Generate email based on role
+                string generatedEmail;
+                if (Input.SelectedRole == "Admin" || Input.SelectedRole == "Staff")
                 {
-                    var currentYear = DateTime.Now.Year.ToString().Substring(2);
-                    var nextYear = (DateTime.Now.Year + 1).ToString().Substring(2);
-                    var randomNumber = new Random().Next(1000, 9999);
-                    user.StudentId = $"{currentYear}{nextYear}{randomNumber}";
+                    generatedEmail = GenerateUniqueEmail(user.FirstName, user.LastName); // Ensure uniqueness for Admin/Staff
                 }
-
-                // Generate email
-                string generatedEmail = GenerateEmail(user.FirstName, user.LastName, user.StudentId);
+                else
+                {
+                    // Generate email for other roles (e.g., Student)
+                    string studentId = GenerateStudentId();
+                    generatedEmail = GenerateEmail(user.FirstName, user.LastName, studentId);
+                    user.StudentId = studentId;
+                }
                 user.Email = generatedEmail;
 
                 // Set the username and email
@@ -186,7 +171,6 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
 
                 string randomPassword = GenerateRandomPassword();
-
 
                 // Create user in the database
                 var result = await _userManager.CreateAsync(user, randomPassword);
@@ -204,8 +188,14 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                 }
             }
 
-
             return Page();
+        }
+
+        private string GenerateUniqueEmail(string firstName, string lastName)
+        {
+            string baseEmail = $"{firstName.Substring(0, 1).ToLower()}{lastName.ToLower()}@smis-uni.net";
+            int count = _userManager.Users.Count(u => u.Email.StartsWith(baseEmail));
+            return count > 0 ? $"{firstName.Substring(0, 1).ToLower()}{lastName.ToLower()}{count}@smis-uni.net" : baseEmail;
         }
 
         private string GenerateRandomPassword()
@@ -250,18 +240,20 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             return new string(chars.OrderBy(x => rand.Next()).ToArray());
         }
 
-
         private string GenerateEmail(string firstName, string lastName, string studentId)
         {
-            // Extract the first character of firstName and lastName
             string firstCharacterFirstName = firstName.Substring(0, 1).ToLower();
             string firstCharacterLastName = lastName.Substring(0, 1).ToLower();
-
-            // Return the email address in the desired format
             return $"{firstCharacterFirstName}{firstCharacterLastName}{studentId}@smis-uni.net";
         }
 
-
+        private string GenerateStudentId()
+        {
+            var currentYear = DateTime.Now.Year.ToString().Substring(2);
+            var nextYear = (DateTime.Now.Year + 1).ToString().Substring(2);
+            var randomNumber = new Random().Next(1000, 9999);
+            return $"{currentYear}{nextYear}{randomNumber}";
+        }
 
         private async Task SendRegistrationDetailsEmail(ApplicationUser user, string randomPassword)
         {
@@ -292,8 +284,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     Këtu janë të dhënat tuaja të regjistrimit:
                     
                     Email: {user.Email}
-                    Password: {randomPassword} (ruajeni këtë fjalëkalim të sigurt)
-                        
+                    Password: {randomPassword} (ruajeni këtë fjalëkalim të sigurt)                
                     
                     Ju lutem mos e shpërndani këtë informacion.
 

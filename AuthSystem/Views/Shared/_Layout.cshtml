@@ -112,7 +112,8 @@
                 <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Departments" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
                     <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index">Department</a>
                 </li>
-            
+
+                    <a class="nav-link text-dark nav-item" asp-area="Identity" asp-page="/Account/AllAdmin">Administrator</a>
 
                     <a class="nav-link text-dark nav-item" asp-area="Identity" asp-page="/Account/AllStaff">Staff</a>
                 <a class="nav-link text-dark nav-item" asp-area="Identity" asp-page="/Account/AllUsers">Students</a>
@@ -123,12 +124,13 @@
                     <a class="nav-link text-dark" asp-area="" asp-controller="Subjects" asp-action="Index">Subject</a>
                 </li>
 
-                    <a class="nav-link text-danger nav-item" asp-area="" asp-page="">
-                        open the exam period-ADMIN- duhet me bo !!
-                    </a>
-                    <a class="nav-link text-danger nav-item" asp-area="" asp-page="">
-                        paraqit provimiet-Student-Duhet me bo!!
-                    </a>
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="ExamPeriods" asp-action="Index">ExamPeriods</a>
+                    </li>
+
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="ExamSubmissions" asp-action="Index">ExamSubmissions</a>
+                    </li>
 
                 }
             </ul>
