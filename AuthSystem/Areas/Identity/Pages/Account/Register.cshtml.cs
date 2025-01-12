@@ -115,24 +115,24 @@ namespace AuthSystem.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Role")]
             public string SelectedRole { get; set; }
+            /*
+                       [Required]
+                       [EmailAddress]
+                       [Display(Name = "Email")]
+                       public string Email { get; set; }
 
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
+                      [Required]
+                       [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+                       [DataType(DataType.Password)]
+                       [Display(Name = "Password")]
+                       public string Password { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Password")]
-            public string Password { get; set; }
-
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+                       [DataType(DataType.Password)]
+                       [Display(Name = "Confirm password")]
+                       [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+                       public string ConfirmPassword { get; set; }  */
         }
-    
+
 
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -185,13 +185,16 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
 
+                string randomPassword = GenerateRandomPassword();
+
+
                 // Create user in the database
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                var result = await _userManager.CreateAsync(user, randomPassword);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
                     await _userManager.AddToRoleAsync(user, Input.SelectedRole);
-                    await SendRegistrationDetailsEmail(user);
+                    await SendRegistrationDetailsEmail(user, randomPassword);
                     return LocalRedirect(returnUrl);
                 }
 
@@ -201,7 +204,50 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                 }
             }
 
+
             return Page();
+        }
+
+        private string GenerateRandomPassword()
+        {
+            var options = new PasswordOptions
+            {
+                RequiredLength = 8,
+                RequireDigit = true,
+                RequireLowercase = true,
+                RequireUppercase = true,
+                RequireNonAlphanumeric = true
+            };
+
+            string[] randomChars = {
+        "ABCDEFGHJKLMNOPQRSTUVWXYZ", // Uppercase
+        "abcdefghijkmnopqrstuvwxyz", // Lowercase
+        "0123456789",                // Digits
+        "!@$?_-"                     // Special Characters
+    };
+
+            Random rand = new Random(Environment.TickCount);
+            var chars = new List<char>();
+
+            if (options.RequireUppercase)
+                chars.Add(randomChars[0][rand.Next(randomChars[0].Length)]);
+
+            if (options.RequireLowercase)
+                chars.Add(randomChars[1][rand.Next(randomChars[1].Length)]);
+
+            if (options.RequireDigit)
+                chars.Add(randomChars[2][rand.Next(randomChars[2].Length)]);
+
+            if (options.RequireNonAlphanumeric)
+                chars.Add(randomChars[3][rand.Next(randomChars[3].Length)]);
+
+            while (chars.Count < options.RequiredLength)
+            {
+                string rcs = randomChars[rand.Next(randomChars.Length)];
+                chars.Add(rcs[rand.Next(rcs.Length)]);
+            }
+
+            return new string(chars.OrderBy(x => rand.Next()).ToArray());
         }
 
 
@@ -217,7 +263,7 @@ namespace AuthSystem.Areas.Identity.Pages.Account
 
 
 
-        private async Task SendRegistrationDetailsEmail(ApplicationUser user)
+        private async Task SendRegistrationDetailsEmail(ApplicationUser user, string randomPassword)
         {
             var emailSettings = new
             {
@@ -246,7 +292,8 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     Këtu janë të dhënat tuaja të regjistrimit:
                     
                     Email: {user.Email}
-                    Password: {Input.Password} (ruajeni këtë fjalëkalim të sigurt)
+                    Password: {randomPassword} (ruajeni këtë fjalëkalim të sigurt)
+                        
                     
                     Ju lutem mos e shpërndani këtë informacion.
 

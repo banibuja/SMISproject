@@ -1,4 +1,4 @@
-﻿﻿@{
+﻿@{
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
@@ -6,12 +6,8 @@
     <div class="col-5 mt-5">
         <div class="card login-logout-card">
             <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs center">
-                   @* <li class="nav-item">
-                        <a class="nav-link" href="/Identity/Account/Login">
-                            Log In
-                        </a>
-                    </li>*@
+                <ul class="nav nav-tabs justify-content-center">
+                    <!-- Corrected quote -->
                     <li class="nav-item">
                         <a class="nav-link" href="/Identity/Account/Register">
                             Register
@@ -40,7 +36,7 @@
                 if (currentPage.toLowerCase().indexOf($this.attr('href').toLowerCase()) !== -1) {
                     $this.addClass('active');
                 }
-            })
-        })
+            });
+        });
     </script>
 }

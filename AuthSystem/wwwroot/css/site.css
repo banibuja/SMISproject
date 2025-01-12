@@ -77,3 +77,18 @@ body {
 }
 
 
+.login-logout-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.nav-tabs .nav-link {
+    font-weight: bold;
+    color: #007bff;
+}
+
+    .nav-tabs .nav-link.active {
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+    }

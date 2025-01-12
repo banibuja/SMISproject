@@ -35,8 +35,11 @@
                     <td>@(string.Join(", ", Model.UserRoles[user]))</td>
                     <td>
                         <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id">
+                            <a asp-page="./EditUser" asp-route-id="@user.Id" class="btn btn-primary">Edit</a>
+
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
+
                     </td>
                 </tr>
             }
