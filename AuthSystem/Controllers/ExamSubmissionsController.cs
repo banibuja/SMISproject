@@ -22,7 +22,8 @@ namespace AuthSystem.Controllers
         // GET: ExamSubmissions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ExamSubmission.ToListAsync());
+            var authDbContext = _context.ExamSubmission.Include(e => e.Department);
+            return View(await authDbContext.ToListAsync());
         }
 
         // GET: ExamSubmissions/Details/5
@@ -34,6 +35,7 @@ namespace AuthSystem.Controllers
             }
 
             var examSubmission = await _context.ExamSubmission
+                .Include(e => e.Department)
                 .FirstOrDefaultAsync(m => m.ExamSubmissionId == id);
             if (examSubmission == null)
             {
@@ -46,6 +48,7 @@ namespace AuthSystem.Controllers
         // GET: ExamSubmissions/Create
         public IActionResult Create()
         {
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace AuthSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExamSubmissionId,ExamTitle,SubmissionDate,Status,Notes")] ExamSubmission examSubmission)
+        public async Task<IActionResult> Create([Bind("ExamSubmissionId,ExamTitle,SubmissionDate,Status,DepartmentId")] ExamSubmission examSubmission)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace AuthSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", examSubmission.DepartmentId);
             return View(examSubmission);
         }
 
@@ -78,6 +82,7 @@ namespace AuthSystem.Controllers
             {
                 return NotFound();
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", examSubmission.DepartmentId);
             return View(examSubmission);
         }
 
@@ -86,7 +91,7 @@ namespace AuthSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ExamSubmissionId,ExamTitle,SubmissionDate,Status,Notes")] ExamSubmission examSubmission)
+        public async Task<IActionResult> Edit(int id, [Bind("ExamSubmissionId,ExamTitle,SubmissionDate,Status,DepartmentId")] ExamSubmission examSubmission)
         {
             if (id != examSubmission.ExamSubmissionId)
             {
@@ -113,6 +118,7 @@ namespace AuthSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", examSubmission.DepartmentId);
             return View(examSubmission);
         }
 
@@ -125,6 +131,7 @@ namespace AuthSystem.Controllers
             }
 
             var examSubmission = await _context.ExamSubmission
+                .Include(e => e.Department)
                 .FirstOrDefaultAsync(m => m.ExamSubmissionId == id);
             if (examSubmission == null)
             {

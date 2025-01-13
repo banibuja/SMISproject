@@ -20,13 +20,9 @@ namespace AuthSystem.Models
         [StringLength(50)]
         public string Status { get; set; }
 
-        [StringLength(500)]
-        public string Notes { get; set; }
-
-        
         [ForeignKey("Department")]
         public int DepartmentId { get; set; }
 
-        public Department Department { get; set; }  
+        public Department? Department { get; set; }  
     }
 }
