@@ -42,6 +42,10 @@ public DbSet<AuthSystem.Models.Grade> Grade { get; set; } = default!;
     public DbSet<ExamPeriod> ExamPeriods { get; set; }
 
 public DbSet<AuthSystem.Models.ExamSubmission> ExamSubmission { get; set; } = default!;
+
+public DbSet<AuthSystem.Models.Location> Location { get; set; } = default!;
+
+public DbSet<AuthSystem.Models.Semester> Semester { get; set; } = default!;
   //  public DbSet<ExamSubmission> ExamSubmissions { get; set; }
 
 
