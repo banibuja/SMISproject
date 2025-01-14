@@ -1,0 +1,90 @@
+﻿@model AuthSystem.Models.StudentSemester
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>StudentSemester</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SemesterId" class="control-label">Semesters</label>
+                <select asp-for="SemesterId" class="form-control" asp-items="@(ViewData["SemesterId"] as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LocationId" class="control-label">Location</label>
+                <select asp-for="LocationId" class="form-control" asp-items="ViewBag.LocationId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleId" class="control-label">Schedule</label>
+                <select asp-for="ScheduleId" class="form-control" asp-items="ViewBag.ScheduleId"></select>
+            </div>
+            <div class="form-group">
+                <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentId" hidden></select>
+            </div>
+            <div class="form-group">
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId" hidden></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<h4>Your Semester Registrations</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Semester</th>
+            <th>Location</th>
+            <th>Schedule</th>
+            <th>Department</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewData["StudentSemesters"] != null)
+        {
+            var registrations = ViewData["StudentSemesters"] as IEnumerable<AuthSystem.Models.StudentSemester>;
+            if (registrations != null && registrations.Any())
+            {
+                foreach (var registration in registrations)
+                {
+                    <tr>
+                        <td>@registration.Semester.Name</td>
+                        <td>@registration.Location.Name</td>
+                        <td>@registration.Schedule.Name</td>
+                        <td>@registration.Department.Name</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">You have not registered for any semesters yet.</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No semester registrations available.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

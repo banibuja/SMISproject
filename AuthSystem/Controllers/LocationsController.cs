@@ -54,7 +54,7 @@ namespace AuthSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LocationId,Name,Address,City,State")] Location location)
+        public async Task<IActionResult> Create([Bind("LocationId,Name")] Location location)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace AuthSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LocationId,Name,Address,City,State")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("LocationId,Name")] Location location)
         {
             if (id != location.LocationId)
             {

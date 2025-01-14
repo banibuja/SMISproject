@@ -8,11 +8,14 @@
             <div class="card-header">
                 <ul class="nav nav-tabs justify-content-center">
                     <!-- Corrected quote -->
+ @if (User.IsInRole("Admin"))
+                {
                     <li class="nav-item">
                         <a class="nav-link" href="/Identity/Account/Register">
                             Register
                         </a>
                     </li>
+                }
                 </ul>
             </div>
             <div class="card-body">

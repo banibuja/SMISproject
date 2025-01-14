@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AuthSystem.Data;
+using AuthSystem.Models;
 
-namespace AuthSystem.Models
+namespace AuthSystem.Controllers
 {
     public class SchedulesController : Controller
     {
