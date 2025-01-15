@@ -7,13 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AuthSystem.Data;
 using AuthSystem.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace AuthSystem.Controllers
 {
-
-    [Authorize(Roles = "Admin")]
-
     public class SubjectsController : Controller
     {
         private readonly AuthDbContext _context;
@@ -52,6 +48,9 @@ namespace AuthSystem.Controllers
         // GET: Subjects/Create
         public IActionResult Create()
         {
+
+            var category = new List<string> { "Obligative", "Zgjedhore" };
+            ViewData["Categories"] = new SelectList(category);
             ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name");
             return View();
         }
@@ -63,13 +62,24 @@ namespace AuthSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Code,Name,ETCs,DepartmentId,Category")] Subject subject)
         {
+            foreach (var key in ModelState.Keys)
+            {
+                var state = ModelState[key];
+                foreach (var error in state.Errors)
+                {
+                    Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(subject);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", subject.DepartmentId);
+            var category = new List<string> { "Obligative", "Zgjedhore" };
+            ViewData["Categories"] = new SelectList(category);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", subject.DepartmentId);
             return View(subject);
         }
 
@@ -86,7 +96,7 @@ namespace AuthSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", subject.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", subject.DepartmentId);
             return View(subject);
         }
 
@@ -122,7 +132,7 @@ namespace AuthSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", subject.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", subject.DepartmentId);
             return View(subject);
         }
 

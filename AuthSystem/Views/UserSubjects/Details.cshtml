@@ -1,14 +1,13 @@
-﻿@model AuthSystem.Models.UserCourse
+﻿@model AuthSystem.Models.UserSubject
 
 @{
     ViewData["Title"] = "Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Details</h1>
 
 <div>
-    <h4>UserCourse</h4>
+    <h4>UserSubject</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -18,10 +17,10 @@
             @Html.DisplayFor(model => model.User.Id)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Course)
+            @Html.DisplayNameFor(model => model.Subject)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Course.Name)
+            @Html.DisplayFor(model => model.Subject.Category)
         </dd>
     </dl>
 </div>

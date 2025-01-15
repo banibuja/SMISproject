@@ -13,47 +13,45 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-  /*  protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
+    /*  protected override void OnModelCreating(ModelBuilder builder)
+      {
+          base.OnModelCreating(builder);
 
-        // If you want to avoid cascading delete
-        builder.Entity<SemesterRegistration>()
-            .HasOne(sr => sr.User)
-            .WithMany()
-            .HasForeignKey(sr => sr.UserId)
-            .OnDelete(DeleteBehavior.Restrict);  // or use DeleteBehavior.SetNull if needed
-    } */
+          // If you want to avoid cascading delete
+          builder.Entity<SemesterRegistration>()
+              .HasOne(sr => sr.User)
+              .WithMany()
+              .HasForeignKey(sr => sr.UserId)
+              .OnDelete(DeleteBehavior.Restrict);  // or use DeleteBehavior.SetNull if needed
+      } */
 
 
     public DbSet<AuthSystem.Models.Department> Department { get; set; } = default!;
- //   public IEnumerable<object> Courses { get; internal set; }
 
-public DbSet<AuthSystem.Models.Course> Course { get; set; } = default!;
 
-public DbSet<AuthSystem.Models.UserCourse> UserCourse { get; set; } = default!;
+    public DbSet<AuthSystem.Models.UserSubject> UserSubject { get; set; } = default!;
 
 
 
-public DbSet<AuthSystem.Models.Subject> Subject { get; set; } = default!;
+    public DbSet<AuthSystem.Models.Subject> Subject { get; set; } = default!;
 
-public DbSet<AuthSystem.Models.Grade> Grade { get; set; } = default!;
+    public DbSet<AuthSystem.Models.Grade> Grade { get; set; } = default!;
 
     public DbSet<ExamPeriod> ExamPeriods { get; set; }
 
-public DbSet<AuthSystem.Models.ExamSubmission> ExamSubmission { get; set; } = default!;
+    public DbSet<AuthSystem.Models.ExamSubmission> ExamSubmission { get; set; } = default!;
 
-public DbSet<AuthSystem.Models.Location> Location { get; set; } = default!;
+    public DbSet<AuthSystem.Models.Location> Location { get; set; } = default!;
 
-public DbSet<AuthSystem.Models.Semester> Semester { get; set; } = default!;
+    public DbSet<AuthSystem.Models.Semester> Semester { get; set; } = default!;
 
-public DbSet<AuthSystem.Models.Schedule> Schedule { get; set; } = default!;
+    public DbSet<AuthSystem.Models.Schedule> Schedule { get; set; } = default!;
 
-public DbSet<AuthSystem.Models.StudentSemester> StudentSemester { get; set; } = default!;
+    public DbSet<AuthSystem.Models.StudentSemester> StudentSemester { get; set; } = default!;
 
     public DbSet<Log> Logs { get; set; }  // Shtoni këtë linjë
 
-    //  public DbSet<ExamSubmission> ExamSubmissions { get; set; }
+    public DbSet<Exam> Exam { get; set; }
 
 
 

@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Assign Staff to Subjects";
+    var subjects = ViewData["Subjects"] as List<AuthSystem.Models.Subject>;
+    var staffUsers = ViewData["StaffUsers"] as List<AuthSystem.Areas.Identity.Data.ApplicationUser>;
+    var userSubjects = ViewData["UserSubjects"] as List<AuthSystem.Models.UserSubject>;
+}
+
+<h1>Assign Staff to Subjects</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+            <th>Assign Staff</th>
+            <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subject in subjects)
+            {
+            <tr>
+                    <form asp-action="Create">
+                        <td>@subject.Name
+                    <input hidden name="SubjectId" value="@subject.Id" />
+                </td>
+                        <td>
+                            <select name="userId" class="form-control w-50">
+                                <option value="">Select a staff member</option>
+                                @foreach (var staff in staffUsers)
+                                {
+                                    // Check if the staff is already assigned to this subject
+                                    var isAssigned = userSubjects.Any(us => us.SubjectId == subject.Id && us.UserId == staff.Id);
+                                    if (!isAssigned)
+                                    {
+                                <option value="@staff.Id">@staff.FirstName @staff.LastName</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="d-flex ">
+                            <button type="submit" class="btn btn-primary">Assign Staff</button>
+                        </td>
+                     </form>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

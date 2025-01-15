@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthSystem.Models
 {
-    public class UserCourse
+    public class UserSubject
     {
         [Key]
         public int Id { get; set; }
@@ -15,10 +15,10 @@ namespace AuthSystem.Models
 
         public ApplicationUser? User { get; set; }
 
-        // Foreign Key to Course
-        [ForeignKey("Course")]
-        public int CourseId { get; set; }
+        // Foreign Key to Subject
+        [ForeignKey("Subject")]
+        public int SubjectId { get; set; }
 
-        public Course? Course { get; set; }
+        public Subject? Subject { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace AuthSystem.Models
 
         // Navigation property to connect to the Department
         public Department? Department { get; set; }
+        public ICollection<UserSubject>? UserSubjects { get; set; } // Add this line
     }
 
 }

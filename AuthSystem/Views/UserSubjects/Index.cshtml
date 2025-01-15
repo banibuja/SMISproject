@@ -1,0 +1,51 @@
+﻿@model IEnumerable<AuthSystem.Models.Subject>
+
+@{
+    ViewData["Title"] = "Subjects and Assigned Staff";
+}
+
+<h1>Subjects and Assigned Staff</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Assigned Staff</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var subject in Model)
+        {
+            <tr>
+                <td>@subject.Name</td>
+                <td>
+                    @if (subject.UserSubjects != null && subject.UserSubjects.Any())
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                View All Staff
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @foreach (var professorSubject in subject.UserSubjects)
+                                {
+                                    <li class="dropdown-item d-flex justify-content-between align-items-center">
+                                        <span>@professorSubject.User.UserName</span>
+                                        <a class="text-danger ps-4 text-decoration-none" asp-action="Delete" asp-route-id="@professorSubject.Id" title="Delete" >x</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>No staff assigned</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -80,7 +80,6 @@ public class ApplicationUser : IdentityUser
     [ForeignKey("DepartmentId")]
     public Department? Department { get; set; }
 
-    public ICollection<Course> Courses { get; set; }  // Navigation property for courses
 
 
 }

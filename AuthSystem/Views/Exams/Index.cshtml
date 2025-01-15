@@ -1,0 +1,92 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                #
+            </th>
+            <th>
+                Code
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Grade
+            </th>
+            <th>
+                Grade Status
+            </th>
+            <th>
+                Created At
+            </th>
+            <th>
+                UserName
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Select((value, index) => new { value, index }))
+        {
+            <tr>
+                <td>@(item.index + 1)</td>
+                <td>
+                    @item.value.SubjectCode
+                </td>
+                <td>
+                    @item.value.SubjectName
+                </td>
+                <td>
+                    @item.value.SubjectCategory
+                </td>
+                <td>
+                    @if (item.value.Grade == 0)
+                    {
+                        @:
+                    }
+                    else
+                    {
+						@item.value.Grade
+                    }
+                </td>
+                <td>
+                    @if (item.value.Grade == 0)
+                    {
+                        @:
+                    }
+                    else
+                    {
+						@item.value.GradeStatus
+                    }
+                </td>
+                <td>
+                    @if (item.value.Grade == 0)
+                    {
+                        @:
+                    }
+                    else
+                    {
+                        @item.value.CreatedAt
+                    }
+                </td>
+                <td>
+                    @item.value.StaffName
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> 
