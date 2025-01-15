@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using AuthSystem.Data;
 using AuthSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace AuthSystem.Areas.Identity.Pages.Account
 {
@@ -179,10 +180,31 @@ namespace AuthSystem.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
                     await _userManager.AddToRoleAsync(user, Input.SelectedRole);
                     await SendRegistrationDetailsEmail(user, randomPassword);
+
+                    var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    string logAction = Input.SelectedRole switch
+                    {
+                        "Admin" => "Admin Created",
+                        "Staff" => "Staff Created",
+                        "Student" => "Student Created",
+                        _ => "User Created"
+                    };
+
+                    var log = new Log
+                    {
+                        Action = logAction,
+                        UserId = loggedInUserId,
+                        Timestamp = DateTime.Now,
+                        Details = $"created with email {user.Email}."
+                    };
+                    _context.Logs.Add(log);  // Assuming you have a DbSet<Log> in your context
+                    await _context.SaveChangesAsync();
+
                     return LocalRedirect(returnUrl);
                 }
+            
 
-                foreach (var error in result.Errors)
+            foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }

@@ -50,7 +50,10 @@ public DbSet<AuthSystem.Models.Semester> Semester { get; set; } = default!;
 public DbSet<AuthSystem.Models.Schedule> Schedule { get; set; } = default!;
 
 public DbSet<AuthSystem.Models.StudentSemester> StudentSemester { get; set; } = default!;
-  //  public DbSet<ExamSubmission> ExamSubmissions { get; set; }
+
+    public DbSet<Log> Logs { get; set; }  // Shtoni këtë linjë
+
+    //  public DbSet<ExamSubmission> ExamSubmissions { get; set; }
 
 
 

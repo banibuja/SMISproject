@@ -25,6 +25,23 @@ namespace AuthSystem.Controllers
             _userManager = userManager;
         }
 
+        private async Task LogAction(string action, string entity, int entityId, string userId, string details = "")
+        {
+            var log = new Log
+            {
+                Action = action,
+                Entity = entity,  
+                EntityId = entityId,  
+                UserId = userId,  
+                Timestamp = DateTime.UtcNow,  
+                Details = details  
+            };
+
+            _context.Add(log);  
+            await _context.SaveChangesAsync();  
+        }
+
+
         // GET: Departments
         public async Task<IActionResult> Index()
         {
@@ -65,6 +82,11 @@ namespace AuthSystem.Controllers
             {
                 _context.Add(department);
                 await _context.SaveChangesAsync();
+
+                // Regjistro log-un
+                var userId = _userManager.GetUserId(User);  // Get the current user's ID
+                await LogAction("Create", "Department", department.Id, userId, $"Created department: {department.Name}");
+
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
@@ -102,6 +124,11 @@ namespace AuthSystem.Controllers
                 {
                     _context.Update(department);
                     await _context.SaveChangesAsync();
+
+                    // Regjistro log-un
+                    var userId = _userManager.GetUserId(User);
+                    await LogAction("Update", "Department", department.Id, userId, $"Updated department name to: {department.Name}");
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,6 +145,7 @@ namespace AuthSystem.Controllers
             }
             return View(department);
         }
+
 
         // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -146,11 +174,16 @@ namespace AuthSystem.Controllers
             if (department != null)
             {
                 _context.Department.Remove(department);
+
+                // Log the delete action
+                var userId = _userManager.GetUserId(User);
+                await LogAction("Delete", "Department", department.Id, userId, $"Deleted department: {department.Name}");
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool DepartmentExists(int id)
         {

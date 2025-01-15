@@ -83,7 +83,20 @@
     </header>
     <div class="d-flex flex-row">
         <div id="sidebar" class="d-flex flex-column p-3 @(Context.Request.Path == "/Identity/Account/Login" ? "no-header" : "")">
-            <h5 class="text-center">Menu</h5>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <h5 class="text-center">Admin Menu</h5>
+            }
+            else if (User.IsInRole("Student"))
+            {
+                <h5 class="text-center">Menu</h5>
+            }
+            else if (User.IsInRole("Staff"))
+            {
+                <h5 class="text-center">Staff Menu</h5>
+            }
+
             <hr>
             <ul class="nav flex-column">
               @*  <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
@@ -151,7 +164,9 @@
                     <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
                         <a class="nav-link text-dark" asp-area="" asp-controller="StudentSemesters" asp-action="Index">All Registers Semesters</a>
                     </li>
-                  
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Logs" asp-action="Index">All Logs</a>
+                    </li>
                   
 
                 }
