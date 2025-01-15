@@ -79,16 +79,19 @@ namespace AuthSystem.Controllers
             var gradeStatuses = new List<string> { "Normal", "Transfer" };
 
             // Merrni të gjithë përdoruesit me rolin "Student"
-            var allUsers = await _userManager.Users.ToListAsync();
-            var studentUsers = new List<ApplicationUser>();
+            var professorId = _userManager.GetUserId(User);
 
-            foreach (var user in allUsers)
-            {
-                if (await _userManager.IsInRoleAsync(user, "Student"))
-                {
-                    studentUsers.Add(user);
-                }
-            }
+            // Get the users who have submitted an exam to this professor
+            var usersWithSubmittedExams = _context.Exam
+                .Include(e => e.User) // Include the User details
+                .Include(e => e.UserSubject) // Include the UserSubject details
+                .Where(e => e.UserSubject.UserId == professorId) // Filter by professor ID
+                .Select(e => e.User) // Select the User from the Exam table
+                .Distinct() // Ensure distinct users in case of duplicates
+                .ToList();
+
+            // Populate ViewData with the filtered users
+
 
             // Fetch the logged-in user's grades
             var userId = _userManager.GetUserId(User);
@@ -98,19 +101,23 @@ namespace AuthSystem.Controllers
                 .ToHashSet();
 
             // Filter subjects that have not been graded yet
-            var unGradedSubjects = _context.Subject
-                .Where(s => !gradedSubjects.Contains(s.Id))
+            // Get the subjects connected to the logged-in user via the UserSubject table
+            var unGradedSubjects = _context.UserSubject
+                .Include(us => us.Subject) // Include the Subject details
+                .Where(us => us.UserId == userId) // Filter by the logged-in user's ID
+                .Select(us => us.Subject) // Select the related Subject
+                .Distinct() // Ensure distinct subjects in case of duplicates
                 .ToList();
+
 
             // Populoni ViewData me të dhënat e filtruara
             ViewData["Numbers"] = new SelectList(numbers);
             ViewData["GradeStatuses"] = new SelectList(gradeStatuses);
-            ViewData["Users"] = new SelectList(studentUsers, "Id", "UserName");
+            ViewData["Users"] = new SelectList(usersWithSubmittedExams, "Id", "UserName");
             ViewData["SubjectId"] = new SelectList(unGradedSubjects, "Id", "Name");
 
             return View();
         }
-
 
         // POST: Grades/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
