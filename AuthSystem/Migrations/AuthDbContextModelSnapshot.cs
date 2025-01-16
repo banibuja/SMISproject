@@ -281,9 +281,15 @@ namespace AuthSystem.Migrations
                     b.Property<int?>("SubjectId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Grade");
                 });
@@ -667,7 +673,15 @@ namespace AuthSystem.Migrations
                         .WithMany()
                         .HasForeignKey("SubjectId");
 
+                    b.HasOne("AuthSystem.Areas.Identity.Data.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Subject");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AuthSystem.Models.Log", b =>

@@ -130,7 +130,6 @@ namespace AuthSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserSubjectId")] Exam exam)
         {
-            Console.WriteLine(exam.UserSubjectId);
             exam.UserId = _userManager.GetUserId(User);
 
             if (exam.UserSubjectId == null)

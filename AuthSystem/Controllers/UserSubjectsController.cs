@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AuthSystem.Data;
 using AuthSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserSubjectsController : Controller
     {
         private readonly AuthDbContext _context;

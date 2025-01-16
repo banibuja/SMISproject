@@ -13,7 +13,7 @@ namespace AuthSystem.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> MyProfile()
+        public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.GetUserAsync(User);
 

@@ -10,6 +10,8 @@ using AuthSystem.Data;
 using AuthSystem.Models;
 using AuthSystem.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
+using AuthSystem.Migrations;
+using System.Security.Claims;
 
 namespace AuthSystem.Controllers
 {
@@ -25,15 +27,17 @@ namespace AuthSystem.Controllers
         }
 
         // GET: Grades
-        [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> Index()
         {
             // Fetch the list of users
             var users = await _userManager.Users.ToListAsync();
+            var professorId = _userManager.GetUserId(User);
 
             // Fetch grades with related data
             var grades = await _context.Grade
-                .Include(g => g.Subject) // Include Subject details
+                .Include(g => g.Subject)
+                .Where(g => g.UserId == professorId)// Include Subject details
                 .ToListAsync();
 
             // Map StudentId to UserName dynamically
@@ -47,6 +51,7 @@ namespace AuthSystem.Controllers
         }
 
         // GET: Grades/Details/5
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> Details()
         {
             var userId = _userManager.GetUserId(User);
@@ -72,41 +77,33 @@ namespace AuthSystem.Controllers
 
         // GET: Grades/Create
         // GET: Grades/Create
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> Create()
         {
-            // Lista e numrave dhe statuset e notave
             var numbers = new List<int> { 5, 6, 7, 8, 9, 10 };
             var gradeStatuses = new List<string> { "Normal", "Transfer" };
 
-            // Merrni të gjithë përdoruesit me rolin "Student"
             var professorId = _userManager.GetUserId(User);
 
-            // Get the users who have submitted an exam to this professor
             var usersWithSubmittedExams = _context.Exam
-                .Include(e => e.User) // Include the User details
-                .Include(e => e.UserSubject) // Include the UserSubject details
-                .Where(e => e.UserSubject.UserId == professorId) // Filter by professor ID
-                .Select(e => e.User) // Select the User from the Exam table
-                .Distinct() // Ensure distinct users in case of duplicates
+                .Include(e => e.User) 
+                .Include(e => e.UserSubject) 
+                .Where(e => e.UserSubject.UserId == professorId) 
+                .Select(e => e.User) 
+                .Distinct() 
                 .ToList();
 
-            // Populate ViewData with the filtered users
-
-
-            // Fetch the logged-in user's grades
             var userId = _userManager.GetUserId(User);
             var gradedSubjects = _context.Grade
                 .Where(g => g.StudentId == userId)
                 .Select(g => g.SubjectId)
                 .ToHashSet();
 
-            // Filter subjects that have not been graded yet
-            // Get the subjects connected to the logged-in user via the UserSubject table
             var unGradedSubjects = _context.UserSubject
-                .Include(us => us.Subject) // Include the Subject details
-                .Where(us => us.UserId == userId) // Filter by the logged-in user's ID
-                .Select(us => us.Subject) // Select the related Subject
-                .Distinct() // Ensure distinct subjects in case of duplicates
+                .Include(us => us.Subject) 
+                .Where(us => us.UserId == userId) 
+                .Select(us => us.Subject) 
+                .Distinct() 
                 .ToList();
 
 
@@ -115,7 +112,7 @@ namespace AuthSystem.Controllers
             ViewData["GradeStatuses"] = new SelectList(gradeStatuses);
             ViewData["Users"] = new SelectList(usersWithSubmittedExams, "Id", "UserName");
             ViewData["SubjectId"] = new SelectList(unGradedSubjects, "Id", "Name");
-
+            ViewData["UserId"] = new SelectList( new List<string> { userId });
             return View();
         }
 
@@ -135,15 +132,25 @@ namespace AuthSystem.Controllers
                 ModelState.AddModelError("", "This student has already been graded for this subject.");
             }
 
+            // Add UserId from the logged-in user
+            grade.UserId = _userManager.GetUserId(User); // Assuming you're using ASP.NET Identity
+
+            // Manually mark the UserId field as valid
+            ModelState.Remove("UserId");
+
             if (ModelState.IsValid)
             {
                 _context.Add(grade);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Populate dropdown for the view
             ViewData["SubjectId"] = new SelectList(_context.Subject, "Id", "Name", grade.SubjectId);
             return View(grade);
         }
+
+
 
         // GET: Grades/Edit/5
         public async Task<IActionResult> Edit(int? id)

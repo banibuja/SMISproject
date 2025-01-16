@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AuthSystem.Data;
 using AuthSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ExamSubmissionsController : Controller
     {
         private readonly AuthDbContext _context;
@@ -48,7 +50,7 @@ namespace AuthSystem.Controllers
         // GET: ExamSubmissions/Create
         public IActionResult Create()
         {
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id");
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name");
             return View();
         }
 
@@ -65,7 +67,7 @@ namespace AuthSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", examSubmission.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", examSubmission.DepartmentId);
             return View(examSubmission);
         }
 
@@ -82,7 +84,7 @@ namespace AuthSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", examSubmission.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", examSubmission.DepartmentId);
             return View(examSubmission);
         }
 

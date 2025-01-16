@@ -180,7 +180,7 @@ namespace AuthSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", studentSemester.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", studentSemester.DepartmentId);
             ViewData["LocationId"] = new SelectList(_context.Location, "LocationId", "Name", studentSemester.LocationId);
             ViewData["ScheduleId"] = new SelectList(_context.Schedule, "ScheduleId", "Name", studentSemester.ScheduleId);
             ViewData["SemesterId"] = new SelectList(_context.Semester, "SemesterId", "Name", studentSemester.SemesterId);
@@ -218,7 +218,7 @@ namespace AuthSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", studentSemester.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", studentSemester.DepartmentId);
             ViewData["LocationId"] = new SelectList(_context.Location, "LocationId", "Name", studentSemester.LocationId);
             ViewData["ScheduleId"] = new SelectList(_context.Schedule, "ScheduleId", "Name", studentSemester.ScheduleId);
             ViewData["SemesterId"] = new SelectList(_context.Semester, "SemesterId", "Name", studentSemester.SemesterId);

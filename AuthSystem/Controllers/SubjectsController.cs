@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AuthSystem.Data;
 using AuthSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AuthSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class SubjectsController : Controller
     {
         private readonly AuthDbContext _context;
@@ -25,6 +27,8 @@ namespace AuthSystem.Controllers
             var authDbContext = _context.Subject.Include(s => s.Department);
             return View(await authDbContext.ToListAsync());
         }
+
+
 
         // GET: Subjects/Details/5
         public async Task<IActionResult> Details(int? id)

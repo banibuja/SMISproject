@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthSystem.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250115213010_exx")]
-    partial class exx
+    [Migration("20250115231323_updateGradeProffesorId")]
+    partial class updateGradeProffesorId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -262,6 +262,9 @@ namespace AuthSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("GradeStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -281,9 +284,15 @@ namespace AuthSystem.Migrations
                     b.Property<int?>("SubjectId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Grade");
                 });
@@ -667,7 +676,15 @@ namespace AuthSystem.Migrations
                         .WithMany()
                         .HasForeignKey("SubjectId");
 
+                    b.HasOne("AuthSystem.Areas.Identity.Data.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Subject");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AuthSystem.Models.Log", b =>
