@@ -9,51 +9,67 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-action="Index" method="get">
+    <div class="form-group">
+        <input type="text" name="search" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by name..." />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <table class="table">
     <thead>
         <tr>
+            <th>Code</th>
             <th>
-                @Html.DisplayNameFor(model => model.Code)
+                <a asp-action="Index" asp-route-sort="@ViewData["NameSortParm"]">Name</a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ETCs)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Department)
-            </th>
+            <th>ETCs</th>
+            <th>Category</th>
+            <th>Department</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ETCs)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Code)</td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.ETCs)</td>
+                <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                <td>@Html.DisplayFor(modelItem => item.Department.Name)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<div>
+    <!-- Pagination Controls -->
+    <ul class="pagination">
+        @if ((int)ViewData["CurrentPage"] > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-search="@ViewData["CurrentFilter"]">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@( (int)ViewData["CurrentPage"] - 1 )" asp-route-search="@ViewData["CurrentFilter"]">Previous</a>
+            </li>
+        }
+
+        @if ((int)ViewData["CurrentPage"] < (int)ViewData["TotalPages"])
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@( (int)ViewData["CurrentPage"] + 1 )" asp-route-search="@ViewData["CurrentFilter"]">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@( (int)ViewData["TotalPages"] )" asp-route-search="@ViewData["CurrentFilter"]">Last</a>
+            </li>
+        }
+    </ul>
+</div>

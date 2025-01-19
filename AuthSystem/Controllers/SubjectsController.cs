@@ -20,13 +20,47 @@ namespace AuthSystem.Controllers
         {
             _context = context;
         }
-
-        // GET: Subjects
-        public async Task<IActionResult> Index()
+        public IActionResult Index(string sort, string search, int page = 1, int pageSize = 5)
         {
-            var authDbContext = _context.Subject.Include(s => s.Department);
-            return View(await authDbContext.ToListAsync());
+            // Sort parameters
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sort) ? "desc" : "";
+
+            // Pass search query back to the view
+            ViewData["CurrentFilter"] = search;
+
+            var items = from i in _context.Subject // Replace with your actual model context
+                        select i;
+
+            // Search functionality
+            if (!String.IsNullOrEmpty(search))
+            {
+                items = items.Where(i => i.Name.Contains(search));
+            }
+
+            // Sorting functionality
+            switch (sort)
+            {
+                case "desc":
+                    items = items.OrderByDescending(i => i.Name);
+                    break;
+                default:
+                    items = items.OrderBy(i => i.Name);
+                    break;
+            }
+
+            // Paging functionality
+            var totalItems = items.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            var currentPageItems = items.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Passing paginated data to the view
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = totalPages;
+            ViewData["PageSize"] = pageSize;
+
+            return View(currentPageItems);
         }
+
 
 
 
