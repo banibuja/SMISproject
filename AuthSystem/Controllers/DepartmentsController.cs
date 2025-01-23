@@ -14,8 +14,6 @@ namespace AuthSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
 
-    [ApiController]
-    [Route("api/[controller]")]
     public class DepartmentsController : Controller
     {
         private readonly AuthDbContext _context;
@@ -32,15 +30,15 @@ namespace AuthSystem.Controllers
             var log = new Log
             {
                 Action = action,
-                Entity = entity,  
-                EntityId = entityId,  
-                UserId = userId,  
-                Timestamp = DateTime.UtcNow,  
-                Details = details  
+                Entity = entity,
+                EntityId = entityId,
+                UserId = userId,
+                Timestamp = DateTime.UtcNow,
+                Details = details
             };
 
-            _context.Add(log);  
-            await _context.SaveChangesAsync();  
+            _context.Add(log);
+            await _context.SaveChangesAsync();
         }
 
 
@@ -191,28 +189,5 @@ namespace AuthSystem.Controllers
         {
             return _context.Department.Any(e => e.Id == id);
         }
-        private async Task<Department> GetDepartmentById(int id)
-        {
-            return await _context.Department.FirstOrDefaultAsync(m => m.Id == id);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult>  GetAll()
-        {
-            var departments = await _context.Department.ToListAsync();
-            return Ok(departments);
-        }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var department = await GetDepartmentById(id);
-            if (department == null)
-            {
-                return NotFound(new { Message = "Department not found!" });
-            }
-            return Ok(new { Department = department, Message = "Fetched successfully!" });
-        }
-
-
     }
 }

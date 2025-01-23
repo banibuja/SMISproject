@@ -36,7 +36,7 @@ namespace AuthSystem.Controllers
                     SubjectCode = e.UserSubject.Subject.Code,
                     SubjectName = e.UserSubject.Subject.Name,
                     SubjectCategory = e.UserSubject.Subject.Category,
-                    StaffName = e.UserSubject.User.UserName,
+                    StaffName = e.UserSubject.User.FirstName + " " + e.UserSubject.User.LastName,
                     Grade = _context.Grade
                                 .Where(g => g.StudentId == _userManager.GetUserId(User) && g.SubjectId == e.UserSubject.Subject.Id)
                                 .Select(g => g.Number)
@@ -91,7 +91,7 @@ namespace AuthSystem.Controllers
             var userSubjects = _context.UserSubject
                 .Include(us => us.Subject)  // Include Subject details
                 .Include(us => us.User)     // Include User details
-                .Where(us => !_context.Exam.Any(e => e.UserSubject.SubjectId == us.SubjectId) && // Exclude Exam rows
+                .Where(us => !_context.Exam.Any(e => e.UserSubject.SubjectId == us.SubjectId && e.UserId == userId) && // Exclude Exam rows
                              !_context.Grade.Any(g => g.StudentId == userId && g.SubjectId == us.Subject.Id) && // Exclude subjects with grades
                              us.Subject.DepartmentId == loggedInUserDepartmentId) // Filter by departmentId
                 .GroupBy(us => us.SubjectId)
@@ -105,8 +105,8 @@ namespace AuthSystem.Controllers
                     {
                         UserSubjectId = us.Id,
                         UserId = us.UserId,
-                        UserName = us.User.UserName
-                    }).ToList()
+                        UserName = us.User.FirstName + " " + us.User.LastName
+        }).ToList()
                 })
                 .ToList();
 
@@ -130,6 +130,7 @@ namespace AuthSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserSubjectId")] Exam exam)
         {
+            Console.WriteLine(exam.UserSubjectId);
             exam.UserId = _userManager.GetUserId(User);
 
             if (exam.UserSubjectId == null)

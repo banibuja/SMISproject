@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -134,8 +134,10 @@
                 {
 
                     <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Departments" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index">Department</a>
+                        <a class="nav-link text-dark" asp-controller="Departments" asp-action="Index">Department</a>
                     </li>
+
+
                     <li class="nav-item @(ViewContext.RouteData.Values["page"]?.ToString() == "/Account/AllAdmin" ? "active" : "")">
                         <a class="nav-link text-dark " asp-area="Identity" asp-page="/Account/AllAdmin">Administrator</a>
                     </li>
@@ -166,9 +168,7 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="ExamPeriods" asp-action="Index">ExamPeriods</a>
                     </li>
 
-                    <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "ExamSubmissions" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="ExamSubmissions" asp-action="Index">ExamSubmissions</a>
-                    </li>
+                  
 
 
                     <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Locations" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">

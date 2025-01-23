@@ -32,7 +32,7 @@
                                     var isAssigned = userSubjects.Any(us => us.SubjectId == subject.Id && us.UserId == staff.Id);
                                     if (!isAssigned)
                                     {
-                                <option value="@staff.Id">@staff.UserName</option>
+                                <option value="@staff.Id">@staff.FirstName @staff.LastName</option>
                                     }
                                 }
                             </select>

@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AuthSystem.Data;
 using AuthSystem.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Get connection string and configure services
 var connectionString = builder.Configuration.GetConnectionString("AuthDbContextConnection");
 if (string.IsNullOrEmpty(connectionString))
 {
@@ -19,22 +21,67 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
 })
-.AddRoles<IdentityRole>() // Enable roles
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<AuthDbContext>();
 
 builder.Services.AddRazorPages();
+/*
 
-// Build the app
-var app = builder.Build();
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var key = builder.Configuration["Jwt:Key"];
+    var keyBytes = Encoding.ASCII.GetBytes(key);
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Issuer"]
+    };
+    //To validate the JWT token from the cookie in each request.
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Cookies["jwt"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
+    };
+});
 
-// Seed roles after building the app
+*/
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
+var app = builder.Build(); // Initialize app after all services are added
+
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
     await SeedRolesAndAdminAsync(serviceProvider);
 }
 
-// Configure middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -52,7 +99,6 @@ app.MapRazorPages();
 
 app.Run();
 
-// Method to seed roles
 async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -77,7 +123,7 @@ async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
         {
             UserName = adminEmail,
             Email = adminEmail,
-            EmailConfirmed = true, // Opsional
+            EmailConfirmed = true,
             FirstName = "Admin",
             LastName = "Administrator",
             PersonalNumber = "123456789",
@@ -92,7 +138,7 @@ async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
             PrivateEmail = "private@admin.com",
             Nationality = "Kosovar",
             Citizenship = "Kosovar",
-            DepartmentId = null 
+            DepartmentId = null
         };
 
         var result = await userManager.CreateAsync(newAdmin, adminPassword);
@@ -107,4 +153,3 @@ async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
         }
     }
 }
-

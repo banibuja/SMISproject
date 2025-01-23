@@ -35,7 +35,10 @@
                 Created At
             </th>
             <th>
-                UserName
+                Proffesor
+            </th>
+            <th>
+                Action
             </th>
         </tr>
     </thead>
@@ -60,7 +63,7 @@
                     }
                     else
                     {
-						@item.value.Grade
+                        @item.value.Grade
                     }
                 </td>
                 <td>
@@ -70,7 +73,7 @@
                     }
                     else
                     {
-						@item.value.GradeStatus
+                        @item.value.GradeStatus
                     }
                 </td>
                 <td>
@@ -86,6 +89,18 @@
                 <td>
                     @item.value.StaffName
                 </td>
+
+                <td>
+                    @if (item.value.Grade > 0)
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.value.Id" class="btn btn-danger btn-sm">Reject</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.value.Id" class="btn btn-danger btn-sm">Cancel Submission</a>
+                    }
+                </td>
+
             </tr>
         }
     </tbody>

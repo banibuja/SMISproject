@@ -86,11 +86,11 @@ namespace AuthSystem.Controllers
             var professorId = _userManager.GetUserId(User);
 
             var usersWithSubmittedExams = _context.Exam
-                .Include(e => e.User) 
-                .Include(e => e.UserSubject) 
-                .Where(e => e.UserSubject.UserId == professorId) 
-                .Select(e => e.User) 
-                .Distinct() 
+                .Include(e => e.User)
+                .Include(e => e.UserSubject)
+                .Where(e => e.UserSubject.UserId == professorId)
+                .Select(e => e.User)
+                .Distinct()
                 .ToList();
 
             var userId = _userManager.GetUserId(User);
@@ -100,10 +100,10 @@ namespace AuthSystem.Controllers
                 .ToHashSet();
 
             var unGradedSubjects = _context.UserSubject
-                .Include(us => us.Subject) 
-                .Where(us => us.UserId == userId) 
-                .Select(us => us.Subject) 
-                .Distinct() 
+                .Include(us => us.Subject)
+                .Where(us => us.UserId == userId)
+                .Select(us => us.Subject)
+                .Distinct()
                 .ToList();
 
 
@@ -112,7 +112,7 @@ namespace AuthSystem.Controllers
             ViewData["GradeStatuses"] = new SelectList(gradeStatuses);
             ViewData["Users"] = new SelectList(usersWithSubmittedExams, "Id", "UserName");
             ViewData["SubjectId"] = new SelectList(unGradedSubjects, "Id", "Name");
-            ViewData["UserId"] = new SelectList( new List<string> { userId });
+            ViewData["UserId"] = new SelectList(new List<string> { userId });
             return View();
         }
 

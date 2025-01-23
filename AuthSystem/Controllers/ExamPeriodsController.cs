@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace AuthSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
+
     public class ExamPeriodsController : Controller
     {
         private readonly AuthDbContext _context;
@@ -84,7 +85,7 @@ namespace AuthSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", examPeriod.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", examPeriod.DepartmentId);
             return View(examPeriod);
         }
 
@@ -120,7 +121,7 @@ namespace AuthSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Name", examPeriod.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "Id", "Id", examPeriod.DepartmentId);
             return View(examPeriod);
         }
 

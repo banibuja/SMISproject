@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace AuthSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
+
     public class UserSubjectsController : Controller
     {
         private readonly AuthDbContext _context;
